@@ -51,11 +51,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
     private final SlidingTabStrip mTabStrip;
+    View oldSelection = null; // new field indicating old selected item
     private int mTitleOffset;
-
     private int mTabViewLayoutId;
     private int mTabViewTextViewId;
-
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
 
@@ -139,7 +138,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mViewPager = viewPager;
         if (viewPager != null) {
-            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            viewPager.addOnPageChangeListener(new InternalViewPagerListener());
             populateTabStrip();
         }
     }
@@ -174,7 +173,16 @@ public class SlidingTabLayout extends HorizontalScrollView {
         return textView;
     }
 
+    // method to remove `selected` state from old one
+    private void removeOldSelection() {
+        if (oldSelection != null) {
+            oldSelection.setSelected(false);
+        }
+    }
+
     private void populateTabStrip() {
+        removeOldSelection(); // add those two lines
+        oldSelection = null;
         final PagerAdapter adapter = mViewPager.getAdapter();
         final View.OnClickListener tabClickListener = new TabClickListener();
 
@@ -221,6 +229,13 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         View selectedChild = mTabStrip.getChildAt(tabIndex);
         if (selectedChild != null) {
+
+            if (positionOffset == 0 && selectedChild != oldSelection) { // added part
+                selectedChild.setSelected(true);
+                removeOldSelection();
+                oldSelection = selectedChild;
+            }
+
             int targetScrollX = selectedChild.getLeft() + positionOffset;
 
             if (tabIndex > 0 || positionOffset > 0) {

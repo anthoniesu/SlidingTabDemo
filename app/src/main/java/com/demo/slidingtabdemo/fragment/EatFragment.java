@@ -1,20 +1,26 @@
 package com.demo.slidingtabdemo.fragment;
 
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.demo.slidingtabdemo.R;
+import com.demo.slidingtabdemo.adapter.ItemAdapter;
 import com.demo.slidingtabdemo.base.BaseFragment;
+import com.demo.slidingtabdemo.entity.DataSet;
+import com.demo.slidingtabdemo.listener.OnEventListner;
+import com.demo.slidingtabdemo.utils.GetJsonData;
 
 
-public class EatFragment extends BaseFragment {
+public class EatFragment extends BaseFragment implements OnEventListner {
 
-    private static final String DATA_NAME = "name";
-
-    private String title = "";
+    private RecyclerView mRecyclerView;
+    private View view;
 
     public static EatFragment newInstance(String title, int indicatorColor, int dividerColor) {
 
@@ -22,11 +28,6 @@ public class EatFragment extends BaseFragment {
         f.setTitle(title);
         f.setIndicatorColor(indicatorColor);
         f.setDividerColor(dividerColor);
-
-        //pass data
-        Bundle args = new Bundle();
-        args.putString(DATA_NAME, title);
-        f.setArguments(args);
 
         return f;
     }
@@ -39,22 +40,30 @@ public class EatFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //get data
-        title = getArguments().getString(DATA_NAME);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //layout
-        View view = inflater.inflate(R.layout.frg_common, container, false);
-
-        //view
-        TextView txtName = (TextView) view.findViewById(R.id.txtName);
-        txtName.setText(title);
+        if (view == null) {
+            view = inflater.inflate(R.layout.frg_common, container, false);
+        }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.setLayoutManager(layoutManager);
+        GetJsonData getJsonData = new GetJsonData(getContext(), this);
+        getJsonData.getJsonData(GetJsonData.TYPE_EAT);
+
     }
 
     @Override
@@ -67,4 +76,13 @@ public class EatFragment extends BaseFragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void getResponse(DataSet dataSet) {
+        ItemAdapter itemAdapter = new ItemAdapter(getContext(), dataSet.datas);
+        mRecyclerView.setAdapter(itemAdapter);
+    }
+
+    @Override
+    public void getErrorResponse(VolleyError error) {
+    }
 }

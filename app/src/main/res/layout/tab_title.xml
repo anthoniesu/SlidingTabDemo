@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Tab"
-        android:textColor="@color/colorDeepBlue"
+        android:textColor="@color/tab_text_color"
         android:textSize="20sp"
         android:textStyle="bold" />
 

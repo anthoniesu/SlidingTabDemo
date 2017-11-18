@@ -55,6 +55,7 @@ public class TabFragment extends Fragment {
                 return fragments.get(position).getDividerColor();
             }
         });
+        tabs.setBackgroundResource(R.color.colorGrey);
         tabs.setCustomTabView(R.layout.tab_title, R.id.txtTabTitle);
         tabs.setViewPager(pager);
 
