@@ -9,6 +9,8 @@ import java.util.List;
  * Created by Anthonie Su on 2017/11/18.
  */
 
+// Annotation by LoganSquare json library.
+
 @JsonObject
 public class DataSet {
 

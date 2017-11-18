@@ -31,6 +31,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mContext = context;
         mDataSet = dataSet;
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        // Add loading listener while scroll
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -47,6 +48,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
     }
 
+    // Register onLoadMoreListener here.
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.onLoadMoreListener = mOnLoadMoreListener;
     }
@@ -54,6 +56,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder mViewHolder = null;
+
+        // Select to use which ViewHolder by the viewType
         if (viewType == ITEM_TYPE.STYLE_COMPLETE.ordinal()) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_complete, parent, false);
             mViewHolder = new ViewHolderComplete(view);
@@ -67,6 +71,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mViewHolder;
     }
 
+    // Load Image from URL and show in imageView.
     private void loadImageViewfromUrl(String url, ImageView imageView) {
         Picasso.with(mContext)
                 .load(url)
@@ -76,6 +81,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        // Show specific view by the viewholder type
         if (holder instanceof ViewHolderComplete) {
             ((ViewHolderComplete) holder).tvTitle.setText(mDataSet.get(position).getTitle());
             ((ViewHolderComplete) holder).tvContent.setText(mDataSet.get(position).getContent());
@@ -85,12 +91,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             loadImageViewfromUrl(mDataSet.get(position).getImageLink(), ((ViewHolderImage) holder).ivImageLink);
         } else if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            //Change the indeterminate mode for this progress bar. Which means do not show the actual progress
             loadingViewHolder.progressBar.setIndeterminate(true);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
+        // Distinguish which kind of viewType use.
         if (mDataSet.get(position) == null)
             return ITEM_TYPE.STYLE_LOADING.ordinal();
 
@@ -117,6 +125,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         STYLE_LOADING,
     }
 
+    //1. Item with image, title, and description.
     public class ViewHolderComplete extends RecyclerView.ViewHolder {
         public TextView tvTitle, tvContent;
         public ImageView ivImageLink;
@@ -130,6 +139,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    //2. Item with just an image.
     public class ViewHolderImage extends RecyclerView.ViewHolder {
         public ImageView ivImageLink;
 
@@ -139,6 +149,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    // Use for showing loading viewholder
     private class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 

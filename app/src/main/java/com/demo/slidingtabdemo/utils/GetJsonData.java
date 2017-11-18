@@ -21,6 +21,7 @@ public class GetJsonData implements Response.Listener, Response.ErrorListener {
     public final static int TYPE_CITY_GUIDE = 0;
     public final static int TYPE_SHOP = 1;
     public final static int TYPE_EAT = 2;
+    // Fake URL which use make sure it can be connected and got response.
     private final String URL = "https://www.google.com.tw";
     private RequestQueue mQueue = null;
     private OnEventListner mListner = null;
@@ -36,28 +37,34 @@ public class GetJsonData implements Response.Listener, Response.ErrorListener {
     public void getJsonData(int type) {
         mType = type;
         try {
+            // GET method with fake URL to conntect Google.
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, this, this);
 
+            // We can use below code to send request and get JSON responses
             /*JSONObject obj = new JSONObject();
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, URL, obj, this, this) {
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, URL, obj, this, this) {
                 @Override
                 public String getBodyContentType() {
                     return "application/json";
                 }
             };
-            jsonRequest.setRetryPolicy(new DefaultRetryPolicy(300000,
+            jsonRequest.setRetryPolicy(new DefaultRetryPolicy(60000,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
 
+            // Start to send request
             mQueue.add(stringRequest);
+
         } catch (Exception e) {
             e.printStackTrace();
+            mListner.getErrorResponse(new VolleyError(e));
         }
 
     }
 
     @Override
     public void onResponse(Object response) {
+        // Here we fake the JSON response from JSON file instead real response.
         try {
             mListner.getResponse(readJson(mType));
         } catch (Exception e) {
@@ -71,6 +78,7 @@ public class GetJsonData implements Response.Listener, Response.ErrorListener {
         mListner.getErrorResponse(error);
     }
 
+    // We load json file from assets and parse it by LoganSquare library.
     private DataSet readJson(int type) {
         AssetManager assetManager = mContext.getAssets();
         InputStream inputStream = null;

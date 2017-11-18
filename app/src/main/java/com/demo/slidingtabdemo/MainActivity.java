@@ -15,10 +15,12 @@ public class MainActivity extends AppCompatActivity {
         initTabFragment(savedInstanceState);
     }
 
+    // Set title empty as requested.
     private void initActionBar() {
         getSupportActionBar().setTitle("");
     }
 
+    // Create TabFragment
     private void initTabFragment(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             TabFragment tabFragment = new TabFragment();

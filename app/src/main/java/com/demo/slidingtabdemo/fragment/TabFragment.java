@@ -55,17 +55,22 @@ public class TabFragment extends Fragment {
                 return fragments.get(position).getDividerColor();
             }
         });
+        // Set background as requested
         tabs.setBackgroundResource(R.color.colorGrey);
+        // Set customTabView as requested.
         tabs.setCustomTabView(R.layout.tab_title, R.id.txtTabTitle);
         tabs.setViewPager(pager);
 
     }
 
     private LinkedList<BaseFragment> getFragments() {
+        // Set indicator color as requested.
         int indicatorColor = ContextCompat.getColor(getActivity(), R.color.colorDeepBlue);
+        // Set divider color as transparent as requested.
         int dividerColor = Color.TRANSPARENT;
 
         LinkedList<BaseFragment> fragments = new LinkedList<BaseFragment>();
+        // Add fragment page here.
         fragments.add(CityGuideFragment.newInstance(getString(R.string.tab_city_guide), indicatorColor, dividerColor));
         fragments.add(ShopFragment.newInstance(getString(R.string.tab_shop), indicatorColor, dividerColor));
         fragments.add(EatFragment.newInstance(getString(R.string.tab_eat), indicatorColor, dividerColor));

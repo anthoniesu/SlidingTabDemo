@@ -25,6 +25,7 @@ public class CityGuideFragment extends BaseFragment implements OnEventListner {
     private RecyclerView mRecyclerView;
     private View view;
 
+    // Create instance for adding to page.
     public static CityGuideFragment newInstance(String title, int indicatorColor, int dividerColor) {
         CityGuideFragment f = new CityGuideFragment();
         f.setTitle(title);
@@ -49,11 +50,13 @@ public class CityGuideFragment extends BaseFragment implements OnEventListner {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mRecyclerView.setLayoutManager(layoutManager);
+        // Call to get JSON data from URL.
         GetJsonData getJsonData = new GetJsonData(getContext(), this);
         getJsonData.getJsonData(GetJsonData.TYPE_CITY_GUIDE);
 
@@ -82,12 +85,15 @@ public class CityGuideFragment extends BaseFragment implements OnEventListner {
         itemAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
+                // max 100 items
                 if (dataSet.datas.size() <= 100) {
+                    // add null item for showing loading viewholder.
                     dataSet.datas.add(null);
                     itemAdapter.notifyItemInserted(dataSet.datas.size() - 1);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            //remove null item.
                             dataSet.datas.remove(dataSet.datas.size() - 1);
                             itemAdapter.notifyItemRemoved(dataSet.datas.size());
 
@@ -95,6 +101,7 @@ public class CityGuideFragment extends BaseFragment implements OnEventListner {
                             int index = dataSet.datas.size();
                             int end = index + 5;
                             int j = 0;
+                            // Duplicate data from existed items.
                             for (int i = index; i < end; i++) {
                                 dataSet.datas.add(dataSet.datas.get(j++));
                             }
